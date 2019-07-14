@@ -1,18 +1,19 @@
 import simplejson
 from flask import (jsonify, current_app, request, g, make_response)
 from functools import wraps
+from ..errors import TipoErro, UsoInvalido
 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        response = make_response(simplejson.dumps({"message": "Not authorized."}), 401)
-        response.headers['Content-Type'] = "application/json"
         if 'Authorization' in request.headers:
             if request.headers['Authorization'] != '123':
-                return response
+                raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, status_code=401, 
+                    payload="Wrong authorization value.")
         else:
-            return response
+            raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, status_code=401, 
+                payload="Missing authorization header.")
         return f(*args, **kwargs)
     return decorated_function
 
@@ -37,7 +38,11 @@ def generic_handler(error):
     :param error: objeto a ser tratado pelo handler.
     :return: um objeto JSON a ser enviado como resposta para o requisitante.
     """
-    current_app.logger.error(error.ex)
+    if error.ex is not None:
+        current_app.logger.error(error.ex)
+    else:
+        if error.payload is not None:
+            current_app.logger.error(error.payload)
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response

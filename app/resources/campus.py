@@ -33,4 +33,4 @@ def get_campus():
     except ErroInterno as e:
         raise e
     except Exception as e:
-        raise ErroInterno(e, TipoErro.ERRO_INTERNO.name, payload="Erro ao recuperar campi.")
+        raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Erro ao recuperar campi.")

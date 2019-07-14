@@ -16,11 +16,8 @@ def apidocs():
     try:
         return render_template('/apidocs/index.html')
     except UsoInvalido as e:
-        current_app.logger.error(e)
         raise e
     except ErroInterno as e:
-        current_app.logger.error(e)
         raise e
     except Exception as e:
-        current_app.logger.error(e)
-        raise ErroInterno(TipoErro.ERRO_INTERNO.name, payload="Erro ao recuperar campi.")
+        raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Erro ao renderizar documentacao.")

@@ -4,7 +4,7 @@ from enum import Enum
 class ErroInterno(Exception):
     status_code = 500
 
-    def __init__(self, ex, message, status_code=None, payload=None):
+    def __init__(self, message, ex=None, status_code=None, payload=None):
         Exception.__init__(self)
         self.ex = ex
         self.message = message
@@ -20,7 +20,7 @@ class ErroInterno(Exception):
 class UsoInvalido(Exception):
     status_code = 400
 
-    def __init__(self, ex, message, status_code=None, payload=None):
+    def __init__(self, message, ex=None, status_code=None, payload=None):
         Exception.__init__(self)
         self.ex = ex
         self.message = message

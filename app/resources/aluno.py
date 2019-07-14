@@ -11,7 +11,7 @@ bp.register_error_handler(UsoInvalido, generic_handler)
 
 @bp.route('/<int:codigo>', methods=('GET',))
 @bp.route('/', methods=('GET',))
-def get_aluno(codigo=None):
+def get_aluno(codigo: int=None):
     """
     View function para recuperar os alunos. Duas rotas são mapeadas, uma com um codigo e 
     outra sem. Caso seja passado um codigo, um aluno especifico é retornado.
@@ -36,4 +36,4 @@ def get_aluno(codigo=None):
     except ErroInterno as e:
         raise e
     except Exception as e:
-        raise ErroInterno(e, TipoErro.ERRO_INTERNO.name, payload="Erro ao recuperar aluno.")
+        raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Erro ao recuperar aluno.")
