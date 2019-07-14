@@ -22,7 +22,7 @@ def recuperar_aluno(cpd=None):
             else:
                 resposta = simplejson.dumps(dict(resultado), default=alchemy_encoder, ensure_ascii=False)
         else:
-            return {}
+            return simplejson.dumps({})
         return resposta
     except UsoInvalido as e:
         raise e
