@@ -1,6 +1,6 @@
 
 FORMAT: 1A
-HOST: http://localhost:5000/flaskeleton
+HOST: http://localhost:5000/flaskeleton-api
 
 # Descrição da API
 
@@ -25,11 +25,11 @@ Aqui podemos descrever detalhes que são comuns a todos os serviços como format
             {
               [
                 {
-                  "cpd": 1,
+                  "codigo": 1,
                   "nome": "Nome do Aluno 1"
                 },
                 {
-                  "cpd": 2,
+                  "codigo": 2,
                   "nome": "Nome do Aluno 2"
                 }
               ]
@@ -49,18 +49,18 @@ Aqui podemos descrever detalhes que são comuns a todos os serviços como format
 ## Aluno [/aluno/{cpd}]
 
 + Parameters
-    + cpd: 12345 (number, required) - CPD do aluno
+    + codigo: 1 (number, required) - Codigo do aluno
 
 ### Aluno [GET]
 
 + Response 200 (application/json)
 
-  Location: /aluno/12345
+  Location: /aluno/1
 
   + Body
 
             {
-              "cpd": 12345,
+              "codigo": 1,
               "nome": "Nome do Aluno"
             }
 
