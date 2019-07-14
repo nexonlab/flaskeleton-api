@@ -1,0 +1,40 @@
+image: ceumanti/docker-python-odbc:latest
+
+#Stages:
+#  - config
+#  - build
+#  - test
+#  - deploy
+
+# Development: where the actual coding takes place
+# Staging: where the application is reviewed and tested
+# Production: where the final version of the application is hosted
+
+stages:
+  - config
+  - build
+  - test
+  - deploy
+
+config:
+  stage: config
+  script:
+    - echo "Instalando pacotes de requirements.txt necessarios a aplicacao flaskeleton..."
+    - pip install -r requirements.txt
+
+build:
+  stage: build
+  script:
+    - echo "Iniciando aplicacao..."
+    - waitress-serve --call --listen=0.0.0.0:5000 app:create_app
+
+test:
+  stage: test
+  script:
+    - pytest
+
+deploy:
+  stage: deploy
+  script:
+    - docker-compose down
+    - docker-compose up -d --build

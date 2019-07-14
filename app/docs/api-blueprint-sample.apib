@@ -1,0 +1,120 @@
+
+FORMAT: 1A
+HOST: http://localhost:5000/flaskeleton
+
+# Descrição da API
+
+Descrição da API.
+
+# Group API
+
+## Sobre [/]
+
+Aqui podemos descrever detalhes que são comuns a todos os serviços como formatos, headers, tipos de erros, etc
+
+# Group Aluno
+
+## Lista de Alunos [/aluno]
+
+### Listar alunos [GET]
+
++ Response 200 (application/json)
+
+  + Body
+
+            {
+              [
+                {
+                  "cpd": 1,
+                  "nome": "Nome do Aluno 1"
+                },
+                {
+                  "cpd": 2,
+                  "nome": "Nome do Aluno 2"
+                }
+              ]
+            }
+
++ Response 404 (application/json)
+
+  + Body
+
+            {
+              "erro": "TIPO_ERRO",
+              "status_code": 404,
+              "mensagem": "Mensagem de erro."
+            }
+
+
+## Aluno [/aluno/{cpd}]
+
++ Parameters
+    + cpd: 12345 (number, required) - CPD do aluno
+
+### Aluno [GET]
+
++ Response 200 (application/json)
+
+  Location: /aluno/12345
+
+  + Body
+
+            {
+              "cpd": 12345,
+              "nome": "Nome do Aluno"
+            }
+
++ Response 404 (application/json)
+
+  + Body
+
+            {
+              "erro": "TIPO_ERRO",
+              "status_code": 404,
+              "mensagem": "Mensagem de erro."
+            }
+
++ Response 500 (application/json)
+
+  + Body
+
+            {
+              "erro": "TIPO_ERRO",
+              "status_code": 500,
+              "mensagem": "Mensagem de erro."
+            }
+
+## Campus [/campus/]
+
+### Lista Campus [GET]
+
++ Response 200 (application/json)
+
+  Location: /campus/
+
+  + Body
+
+            {
+              "id": 1,
+              "descricao": "Descricao do Campus"
+            }
+
++ Response 404 (application/json)
+
+  + Body
+
+            {
+              "erro": "TIPO_ERRO",
+              "status_code": 404,
+              "mensagem": "Mensagem de erro."
+            }
+
++ Response 500 (application/json)
+
+  + Body
+
+            {
+              "erro": "TIPO_ERRO",
+              "status_code": 500,
+              "mensagem": "Mensagem de erro."
+            }
