@@ -2,7 +2,7 @@ import simplejson
 from flask import (make_response, Blueprint, current_app)
 from ..controllers import campus as campus_controller
 from ..errors import ErroInterno, UsoInvalido, TipoErro
-from . import generic_handler
+from . import generic_handler, login_required, load_context
 
 
 bp = Blueprint('campus', __name__, url_prefix='/campus')
@@ -11,6 +11,8 @@ bp.register_error_handler(UsoInvalido, generic_handler)
 
 
 @bp.route('/', methods=('GET',))
+@load_context
+@login_required
 def get_campus():
     """
     View function para recuperar os campi disponíveis.

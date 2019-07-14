@@ -1,4 +1,31 @@
-from flask import (jsonify, current_app)
+import simplejson
+from flask import (jsonify, current_app, request, g, make_response)
+from functools import wraps
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        response = make_response(simplejson.dumps({"message": "Not authorized."}), 401)
+        response.headers['Content-Type'] = "application/json"
+        if 'Authorization' in request.headers:
+            if request.headers['Authorization'] != '123':
+                return response
+        else:
+            return response
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def load_context(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'Context' in request.headers:
+            g.context = request.headers['Context']
+        else:
+            g.context = "development"
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def generic_handler(error):

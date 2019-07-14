@@ -21,5 +21,5 @@ def recuperar_campus():
 
     except ErroInterno as e:
         raise e
-    except Exception:
-        raise ErroInterno(TipoErro.ERRO_INTERNO.name, payload="Erro ao recuperar campi disponíveis.")
+    except Exception as e:
+        raise ErroInterno(e, TipoErro.ERRO_INTERNO.name, payload="Erro ao recuperar campi disponíveis.")

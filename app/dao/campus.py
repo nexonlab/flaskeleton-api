@@ -1,3 +1,4 @@
+from flask import (g)
 from ..models.db import db
 
 
@@ -15,7 +16,7 @@ def recupera_campus():
             db.text("CAMPUS")
         )
 
-        resultado = db.engine.execute(sql).fetchall()
+        resultado = db.get_engine(bind=g.context).execute(sql).fetchall()
 
         return resultado
     except Exception as e:
