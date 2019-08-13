@@ -1,7 +1,7 @@
 import logging
-from flask import Flask, request, current_app
-from datetime import datetime
-from logging import StreamHandler
+from flask import Flask
+from logging import Formatter
+from logging.handlers import RotatingFileHandler
 from flask_cors import CORS
 from .models.db import db
 from .config import DevelopmentConfig
@@ -12,28 +12,24 @@ __email__ = "nti@ceuma.br"
 __version__ = "v0.0.1"
 
 
-def log_request():
-    try:
-        #############################################################
-        #  logging.getLogger('gunicorn.error') - para WSGI gunicorn #
-        #  logging.getLogger('waitress')       - para WSGI waitress #
-        #############################################################
-        logger = logging.getLogger('gunicorn.error')
-        logger.setLevel(logging.INFO)
-        logger.info("\t{asctime} \t {level} \t {ip} \t {method} \t {url}".format(asctime=datetime.now().
-                                                                                 strftime("%d-%m-%Y %H:%M:%S"),
-                                                                                 level="INFO",
-                                                                                 ip=request.remote_addr,
-                                                                                 method=str(request.method),
-                                                                                 url=request.path))
-    except Exception as e:
-        current_app.logger.error(e)
-
-
 def create_app(test_config=None):
 
     # cria e configura a aplicacao
     app = Flask(__name__, instance_relative_config=True)
+
+    # configurando log do gunicorn para escrita em arquivo
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    file_handler = RotatingFileHandler('logs/app.log', maxBytes=1024, backupCount=2)
+    file_handler.setFormatter(Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    ))
+    file_handler.setLevel(logging.DEBUG)
+    gunicorn_logger.addHandler(file_handler)
+
+    # adicionando logger do gunicorn a aplicacao
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 
     # modificando prefixo da url
     app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/flaskeleton-api')
@@ -55,9 +51,6 @@ def create_app(test_config=None):
 
     db.init_app(app)
     CORS(app)
-
-    # registrando log antes da requisicao
-    app.before_request(log_request)
 
     return app
 

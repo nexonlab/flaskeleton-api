@@ -6,6 +6,7 @@ services:
     restart: on-failure:10
     volumes:
       - .:/application
+      - /var/log/flaskeleton-api/:/application/logs/
     command: bash -c "chmod +x run.sh && ./run.sh"
     ports:
       - "5000:5000"
