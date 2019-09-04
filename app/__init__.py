@@ -5,6 +5,7 @@ from logging.handlers import RotatingFileHandler
 from flask_cors import CORS
 from .models.db import db
 from .config import DevelopmentConfig
+import os
 
 
 __author__ = "NTI CEUMA"
@@ -18,6 +19,8 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     # configurando log do gunicorn para escrita em arquivo
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
     gunicorn_logger = logging.getLogger('gunicorn.error')
     file_handler = RotatingFileHandler('logs/app.log', maxBytes=1024, backupCount=2)
     file_handler.setFormatter(Formatter(

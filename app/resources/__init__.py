@@ -1,5 +1,4 @@
-import simplejson
-from flask import (jsonify, current_app, request, g, make_response)
+from flask import (jsonify, current_app, request, g)
 from functools import wraps
 from ..errors import TipoErro, UsoInvalido
 
@@ -9,11 +8,9 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'Authorization' in request.headers:
             if request.headers['Authorization'] != '123':
-                raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, status_code=401, 
-                    payload="Wrong authorization value.")
+                raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, status_code=401, payload="Wrong authorization value.")
         else:
-            raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, status_code=401, 
-                payload="Missing authorization header.")
+            raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, status_code=401, payload="Missing authorization header.")
         return f(*args, **kwargs)
     return decorated_function
 

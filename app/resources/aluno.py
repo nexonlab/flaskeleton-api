@@ -1,5 +1,5 @@
 from flask import (make_response, Blueprint, current_app)
-from ..controllers import aluno as aluno_controller
+from ..controllers.aluno import AlunoController
 from ..errors import ErroInterno, UsoInvalido, TipoErro
 from . import generic_handler
 
@@ -23,7 +23,7 @@ def get_aluno(codigo: int=None):
     """
     try:
         # aqui o controller trata a resposta e manda o JSON no formato correto.
-        resposta = aluno_controller.recuperar_aluno(codigo)
+        resposta = AlunoController.recuperar_aluno(codigo)
 
         # criando a resposta da requisicao
         response = make_response(resposta, 200)

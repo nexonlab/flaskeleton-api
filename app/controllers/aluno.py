@@ -1,32 +1,37 @@
 from ..errors import UsoInvalido, ErroInterno, TipoErro
-from ..dao import aluno as aluno_dao
+from ..dao.aluno import AlunoDAO
+from ..models.aluno import Aluno
 from . import alchemy_encoder
 import simplejson
 
 
-def recuperar_aluno(cpd=None):
-    """
-    Função que recupera os alunos e trata a resposta para o formato JSON e então retorna para a View Function.
+class AlunoController:
 
-    :param cpd: código do aluno.
-    :return: um objeto do tipo JSON pronto para ser enviado como resposta pela view function.
-    """
-    try:
+    @staticmethod
+    def recuperar_aluno(cpd=None):
+        """
+        Método que recupera os alunos e trata a resposta para o formato JSON e então retorna para a View Function.
 
-        resultado = aluno_dao.recupera_aluno(cpd)
+        :param cpd: código do aluno.
+        :return: um objeto do tipo JSON pronto para ser enviado como resposta pela view function.
+        """
+        try:
 
-        # transforma o resultado da consulta em JSON efetuando um dump para JSON utilizando um encoder proprio
-        if resultado is not None:
-            if isinstance(resultado, list):
-                resposta = simplejson.dumps([dict(aluno) for aluno in resultado], default=alchemy_encoder, ensure_ascii=False)
+            resultado = AlunoDAO.recupera_aluno(Aluno(codigo=cpd))
+
+            # transforma o resultado da consulta em JSON efetuando um dump para JSON utilizando um encoder proprio
+            if resultado is not None:
+                if isinstance(resultado, list):
+                    resposta = simplejson.dumps([dict(aluno) for aluno in resultado], default=alchemy_encoder,
+                                                ensure_ascii=False)
+                else:
+                    resposta = simplejson.dumps(dict(resultado), default=alchemy_encoder, ensure_ascii=False)
             else:
-                resposta = simplejson.dumps(dict(resultado), default=alchemy_encoder, ensure_ascii=False)
-        else:
-            return simplejson.dumps({})
-        return resposta
-    except UsoInvalido as e:
-        raise e
-    except ErroInterno as e:
-        raise e
-    except Exception as e:
-        raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao recuperar aluno(s).")
+                return simplejson.dumps({})
+            return resposta
+        except UsoInvalido as e:
+            raise e
+        except ErroInterno as e:
+            raise e
+        except Exception as e:
+            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao recuperar aluno(s).")

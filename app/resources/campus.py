@@ -1,6 +1,5 @@
-import simplejson
-from flask import (make_response, Blueprint, current_app)
-from ..controllers import campus as campus_controller
+from flask import (make_response, Blueprint)
+from ..controllers.campus import CampusController
 from ..errors import ErroInterno, UsoInvalido, TipoErro
 from . import generic_handler, login_required, load_context
 
@@ -22,7 +21,7 @@ def get_campus():
              500 - erro interno.
     """
     try:
-        resultado = campus_controller.recuperar_campus()
+        resultado = CampusController.recuperar_campus()
 
         response = make_response(resultado, 200)
         response.headers['Content-Type'] = 'application/json'

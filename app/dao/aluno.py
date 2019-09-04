@@ -1,18 +1,21 @@
 import simplejson
-from flask import current_app
-from ..models.db import db
+from ..models.aluno import Aluno
 
 
-def recupera_aluno(codigo=None):
-    try:
-        with open('./app/models/data.json') as json_file:
-            dados = simplejson.load(json_file)
-        
-        if codigo is not None:
-            for aluno in dados:
-                if aluno['codigo'] == codigo:
-                    return aluno
-        else:
-            return dados
-    except Exception as e:
-        raise e
+class AlunoDAO:
+
+    @staticmethod
+    def recupera_aluno(aluno: Aluno):
+        try:
+
+            with open('./app/models/data.json') as json_file:
+                dados = simplejson.load(json_file)
+
+            if aluno.codigo is not None:
+                for t in dados:
+                    if t['codigo'] == aluno.codigo:
+                        return t
+            else:
+                return dados
+        except Exception as e:
+            raise e

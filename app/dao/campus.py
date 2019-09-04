@@ -2,22 +2,25 @@ from flask import (g)
 from ..models.db import db
 
 
-def recupera_campus():
-    """
-    Busca todos os campi disponíveis.
+class CampusDAO:
 
-    :return: uma lista com todos os campi.
-    :exception Exception: Lança uma exceção genérica caso ocorra algum erro.
-    """
-    try:
-        sql = db.select([
-            db.text("CODIGO, DESCRICAO")
-        ]).select_from(
-            db.text("CAMPUS")
-        )
+    @staticmethod
+    def recupera_campus():
+        """
+        Método que busca todos os campi disponíveis.
 
-        resultado = db.get_engine(bind=g.context).execute(sql).fetchall()
+        :return: uma lista com todos os campi.
+        :exception Exception: Lança uma exceção genérica caso ocorra algum erro.
+        """
+        try:
+            sql = db.select([
+                db.text("CODIGO, DESCRICAO")
+            ]).select_from(
+                db.text("CAMPUS")
+            )
 
-        return resultado
-    except Exception as e:
-        raise e
+            resultado = db.get_engine(bind=g.context).execute(sql).fetchall()
+
+            return resultado
+        except Exception as e:
+            raise e
