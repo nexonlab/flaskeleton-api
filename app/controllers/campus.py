@@ -6,8 +6,10 @@ from . import alchemy_encoder
 
 class CampusController:
 
-    @staticmethod
-    def recuperar_campus():
+    def __init__(self, codigo=None):
+        self.__codigo = codigo
+
+    def recuperar_campus(self):
         """
         Método que recupera os alunos e trata a resposta para o formato JSON e então retorna para a View Function.
 

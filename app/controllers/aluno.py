@@ -7,17 +7,20 @@ import simplejson
 
 class AlunoController:
 
-    @staticmethod
-    def recuperar_aluno(cpd=None):
+    def __init__(self, cpd=None):
+        self.__cpd = cpd
+
+
+    def recuperar_aluno(self):
         """
         Método que recupera os alunos e trata a resposta para o formato JSON e então retorna para a View Function.
 
-        :param cpd: código do aluno.
         :return: um objeto do tipo JSON pronto para ser enviado como resposta pela view function.
         """
         try:
-
-            resultado = AlunoDAO.recupera_aluno(Aluno(codigo=cpd))
+            
+            aluno_dao = AlunoDAO(Aluno(codigo=self.__cpd))
+            resultado = aluno_dao.recupera_aluno()
 
             # transforma o resultado da consulta em JSON efetuando um dump para JSON utilizando um encoder proprio
             if resultado is not None:

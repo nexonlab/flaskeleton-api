@@ -4,16 +4,18 @@ from ..models.aluno import Aluno
 
 class AlunoDAO:
 
-    @staticmethod
-    def recupera_aluno(aluno: Aluno):
+    def __init__(self, aluno: Aluno=None):
+        self.__aluno = aluno
+
+    def recupera_aluno(self):
         try:
 
             with open('./app/models/data.json') as json_file:
                 dados = simplejson.load(json_file)
 
-            if aluno.codigo is not None:
+            if self.__aluno.codigo is not None:
                 for t in dados:
-                    if t['codigo'] == aluno.codigo:
+                    if t['codigo'] == self.__aluno.codigo:
                         return t
             else:
                 return dados

@@ -23,7 +23,8 @@ def get_aluno(codigo: int=None):
     """
     try:
         # aqui o controller trata a resposta e manda o JSON no formato correto.
-        resposta = AlunoController.recuperar_aluno(codigo)
+        aluno_controller = AlunoController(cpd=codigo)
+        resposta = aluno_controller.recuperar_aluno()
 
         # criando a resposta da requisicao
         response = make_response(resposta, 200)
