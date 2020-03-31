@@ -19,13 +19,12 @@ class AlunoController:
 
     def recuperar_aluno(self) -> list or Aluno:
         try:
-            aluno_dao = AlunoDAO(self.__aluno)
-            result = aluno_dao.get()
-            if result is not None:
-                if isinstance(result, list):
-                    return AlunoSchema().jsonify(result, many=True)
+            resultado = self.__aluno_dao.get()
+            if resultado is not None:
+                if isinstance(resultado, list):
+                    return AlunoSchema().jsonify(resultado, many=True)
                 else:
-                    return AlunoSchema().jsonify(result)
+                    return AlunoSchema().jsonify(resultado)
             else:
                 raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não foi encontrado.", status_code=404)
         except (UsoInvalido, ErroInterno) as e:
@@ -64,7 +63,7 @@ class AlunoController:
                     raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="Objeto aluno a ser atualizado está nulo "
                                                                             "ou vazio.")
             else:
-                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não existe.", status_code="404")
+                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não existe.", status_code=404)
         except (UsoInvalido, ErroInterno) as e:
             raise e
         except Exception as e:

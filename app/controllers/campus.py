@@ -1,8 +1,6 @@
-import simplejson
-from ..errors import ErroInterno, TipoErro
+from ..errors import ErroInterno, TipoErro, UsoInvalido
 from ..dao.campus import CampusDAO
-from ..models.campus import Campus
-from . import alchemy_encoder
+from ..models.campus import Campus, CampusSchema
 
 
 class CampusController:
@@ -14,28 +12,80 @@ class CampusController:
         return CampusController.__instance
 
     def __init__(self, codigo: int = None):
-        self.__campus_dao = CampusDAO(Campus(codigo=codigo))
+        self.__campus = Campus(codigo=codigo)
+        self.__campus_dao = CampusDAO(self.__campus)
 
-    def recuperar_campus(self):
-        """
-        Método que recupera os alunos e trata a resposta para o formato JSON e então retorna para a View Function.
-
-        :return: uma lista de objetos contendo informacoes dos campi.
-        :exception ErroInterno
-        """
+    def recuperar_campus(self) -> list or Campus:
         try:
             resultado = self.__campus_dao.get()
-
-            # transforma o resultado da consulta em JSON efetuando um dump para JSON utilizando um encoder proprio
-            if isinstance(resultado, list):
-                resposta = simplejson.dumps([dict(aluno) for aluno in resultado], default=alchemy_encoder,
-                                            ensure_ascii=False)
+            if resultado is not None:
+                if isinstance(resultado, list):
+                    return CampusSchema().jsonify(resultado, many=True)
+                else:
+                    return CampusSchema().jsonify(resultado)
             else:
-                resposta = simplejson.dumps(dict(resultado), default=alchemy_encoder, ensure_ascii=False)
-
-            return resposta
-        except ErroInterno as e:
+                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Campus não foi encontrado.", status_code=404)
+        except (ErroInterno, UsoInvalido) as e:
             raise e
         except Exception as e:
-            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, status_code=501,
-                              payload="Erro ao recuperar campi disponíveis.")
+            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Erro ao recuperar campi disponíveis.")
+
+    def criar_campus(self, campus: dict = None) -> Campus:
+        try:
+            if self.__campus.codigo:
+                raise UsoInvalido(TipoErro.ALUNO_DUPLICADO.name, ex="Campus já existe.")
+            else:
+                if campus:
+                    self.valida_campus(campus)
+                    campus_dao = CampusDAO(self.__campus)
+                    result = campus_dao.insert()
+                    return CampusSchema().jsonify(result)
+                else:
+                    raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, ex="Objeto Campus a ser inserido está nulo ou "
+                                                                       "vazio.")
+        except (UsoInvalido, ErroInterno) as e:
+            raise e
+        except Exception as e:
+            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao criar Campus.")
+
+    def atualizar_campus(self, campus: dict = None) -> Campus:
+        try:
+            self.__campus = self.__campus_dao.get()
+            self.__campus_dao = CampusDAO(self.__campus)
+            if self.__campus:
+                if campus:
+                    self.valida_campus(campus)
+                    result = self.__campus_dao.update()
+                    return CampusSchema().jsonify(result)
+                else:
+                    raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="Objeto Campus a ser atualizado está nulo "
+                                                                            "ou vazio.")
+            else:
+                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Campus não existe.", status_code=404)
+        except (UsoInvalido, ErroInterno) as e:
+            raise e
+        except Exception as e:
+            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao atualizar Campus.")
+
+    def deletar_campus(self) -> bool:
+        try:
+            self.__campus = self.__campus_dao.get()
+            self.__campus_dao = CampusDAO(self.__campus)
+            if self.__campus:
+                return self.__campus_dao.delete()
+            else:
+                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não existe.", status_code=404)
+        except (UsoInvalido, ErroInterno) as e:
+            raise e
+        except Exception as e:
+            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao deletar Campus.")
+
+    def valida_campus(self, campus: dict) -> Campus:
+        attrs = ['descricao']
+        for k, v in campus.items():
+            if k not in attrs:
+                raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="Attributo '" + k + "' não é válido.")
+            setattr(self.__campus, k, v)
+
+        return self.__campus
+

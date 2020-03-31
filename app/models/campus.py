@@ -11,7 +11,8 @@ class Campus(db.Model):
     descricao = Column(String, name='DESCRICAO')
 
     def __repr__(self):
-        return "<Campus codigo={codigo}>".format(codigo=self.codigo)
+        return "<Campus codigo={codigo}, descricao={descricao}>".format(codigo=self.codigo,
+                                                                        descricao=self.descricao)
 
 
 class CampusSchema(ma.ModelSchema):
