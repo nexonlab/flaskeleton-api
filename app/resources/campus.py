@@ -9,10 +9,11 @@ bp.register_error_handler(ErroInterno, generic_handler)
 bp.register_error_handler(UsoInvalido, generic_handler)
 
 
+@bp.route('/<int:codigo>', methods=('GET',))
 @bp.route('/', methods=('GET',))
 @load_context
 @login_required
-def get_campus():
+def get_campus(codigo: int = None):
     """
     View function para recuperar os campi disponíveis.
 
@@ -21,7 +22,8 @@ def get_campus():
              500 - erro interno.
     """
     try:
-        resultado = CampusController.recuperar_campus()
+        campus_controller = CampusController(codigo=codigo)
+        resultado = campus_controller.recuperar_campus()
 
         response = make_response(resultado, 200)
         response.headers['Content-Type'] = 'application/json'

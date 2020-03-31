@@ -1,39 +1,22 @@
-from flask import (g)
-from ..models.db import db
 from ..models.campus import Campus
+from . import DAO
 
 
-class CampusDAO:
+class CampusDAO(DAO):
+    __instance = None
 
-    def __init__(self, campus: Campus=None):
+    def __new__(cls, campus: Campus = None):
+        if CampusDAO.__instance is None:
+            CampusDAO.__instance = object.__new__(cls)
+        return CampusDAO.__instance
+
+    def __init__(self, campus: Campus = None):
+        super().__init__(campus)
         self.__campus = campus
 
-    def recupera_campus(self):
-        """
-        Método que busca todos os campi disponíveis.
-
-        :return: uma lista com todos os campi.
-        :exception Exception: Lança uma exceção genérica caso ocorra algum erro.
-        """
-        try:
-            sql = db.select([
-                db.text("CODIGO, DESCRICAO")
-            ]).select_from(
-                db.text("CAMPUS")
-            )
-
-            if self.__campus is not None:
-                if self.__campus.codigo is not None:
-                    sql = sql.where(
-                        db.text(
-                            """
-                            CODIGO = :codigo
-                            """
-                        )
-                    )
-
-            resultado = db.get_engine(bind=g.context).execute(sql, codigo=self.__campus.codigo).fetchall()
-
-            return resultado
-        except Exception as e:
-            raise e
+    def get(self) -> list or Campus:
+        if self.__campus.codigo:
+            self.__campus = Campus.query.filter_by(codigo=self.__campus.codigo).first()
+            return self.__campus
+        else:
+            return Campus.query.all()

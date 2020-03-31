@@ -1,13 +1,20 @@
 import simplejson
 from ..errors import ErroInterno, TipoErro
 from ..dao.campus import CampusDAO
+from ..models.campus import Campus
 from . import alchemy_encoder
 
 
 class CampusController:
+    __instance = None
 
-    def __init__(self, codigo=None):
-        self.__codigo = codigo
+    def __new__(cls, codigo: int = None):
+        if CampusController.__instance is None:
+            CampusController.__instance = object.__new__(cls)
+        return CampusController.__instance
+
+    def __init__(self, codigo: int = None):
+        self.__campus_dao = CampusDAO(Campus(codigo=codigo))
 
     def recuperar_campus(self):
         """
@@ -17,7 +24,7 @@ class CampusController:
         :exception ErroInterno
         """
         try:
-            resultado = CampusDAO.recupera_campus()
+            resultado = self.__campus_dao.get()
 
             # transforma o resultado da consulta em JSON efetuando um dump para JSON utilizando um encoder proprio
             if isinstance(resultado, list):

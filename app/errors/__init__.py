@@ -34,7 +34,8 @@ class UsoInvalido(Exception):
 
 
 class TipoErro(Enum):
-    INSCRICAO_DUPLICADA = 1
+    ALUNO_DUPLICADO = 1
     ERRO_INTERNO = 2
     ERRO_JSON = 3
     ERRO_VALIDACAO = 4
+    NAO_ENCONTRADO = 5

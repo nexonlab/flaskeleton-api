@@ -5,6 +5,7 @@ from logging.handlers import RotatingFileHandler
 from flask_cors import CORS
 from .models.db import db
 from .config import DevelopmentConfig
+from flask_migrate import Migrate
 import os
 
 
@@ -53,6 +54,7 @@ def create_app(test_config=None):
     app.register_blueprint(bp_docs)
 
     db.init_app(app)
+    migrate = Migrate(app, db)
     CORS(app)
 
     return app
