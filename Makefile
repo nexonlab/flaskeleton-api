@@ -42,17 +42,11 @@ build: ## Rebuilda os containers
 down: ## Para e remove os containers
 	docker-compose down
 
-run: ## Comentário
-	docker-compose run {container} /bin/bash
-
-jumpin: ## Comentário
-	docker-compose run {container} bash
-
-test: ## Comentário
+test: ## Sobe o container e executa os testes
 	docker-compose run {container} pytest ./tests/
 
-test-file: ## Comentário
+test-file: ## Sobe o container da aplicação e executa um arquivo de teste
 	docker-compose run {container} pytest ./tests/ --group $(FILE)
 
-tail-logs: ## Comentário
+tail-logs: ## Sobe o container da aplicação e acompanha os logs
 	docker-compose logs -f {container}
