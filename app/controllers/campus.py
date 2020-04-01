@@ -1,6 +1,7 @@
 from ..errors import ErroInterno, TipoErro, UsoInvalido
 from ..dao.campus import CampusDAO
 from ..models.campus import Campus, CampusSchema
+from ..logger import logger
 
 
 class CampusController:
@@ -19,6 +20,7 @@ class CampusController:
         try:
             resultado = self.__campus_dao.get()
             if resultado is not None:
+                logger.info("campus recuperado com sucesso")
                 if isinstance(resultado, list):
                     return CampusSchema().jsonify(resultado, many=True)
                 else:
@@ -39,6 +41,7 @@ class CampusController:
                     self.valida_campus(campus)
                     campus_dao = CampusDAO(self.__campus)
                     result = campus_dao.insert()
+                    logger.info("campus {} criado com sucesso".format(str(self.__campus)))
                     return CampusSchema().jsonify(result)
                 else:
                     raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, ex="Objeto Campus a ser inserido está nulo ou "
@@ -56,6 +59,7 @@ class CampusController:
                 if campus:
                     self.valida_campus(campus)
                     result = self.__campus_dao.update()
+                    logger.info("campus atualizado com sucesso")
                     return CampusSchema().jsonify(result)
                 else:
                     raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="Objeto Campus a ser atualizado está nulo "
@@ -72,7 +76,11 @@ class CampusController:
             self.__campus = self.__campus_dao.get()
             self.__campus_dao = CampusDAO(self.__campus)
             if self.__campus:
-                return self.__campus_dao.delete()
+                if self.__campus_dao.delete():
+                    logger.info("campus deletado com sucesso")
+                    return True
+                else:
+                    return False
             else:
                 raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não existe.", status_code=404)
         except (UsoInvalido, ErroInterno) as e:

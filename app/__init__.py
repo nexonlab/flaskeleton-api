@@ -1,12 +1,10 @@
 import logging
 from flask import Flask
-from logging import Formatter
-from logging.handlers import RotatingFileHandler
 from flask_cors import CORS
 from .models.db import db
 from .config import DevelopmentConfig
 from flask_migrate import Migrate
-import os
+from .logger import logger
 
 
 __author__ = "NTI CEUMA"
@@ -14,26 +12,22 @@ __email__ = "nti@ceuma.br"
 __version__ = "v0.0.1"
 
 
+def setup_logger(app):
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
+
+
+def log_request():
+    logger.request()
+
+
 def create_app(test_config=None):
 
     # cria e configura a aplicacao
     app = Flask(__name__, instance_relative_config=True)
 
-    # configurando log do gunicorn para escrita em arquivo
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    file_handler = RotatingFileHandler('logs/app.log', maxBytes=1024, backupCount=2)
-    file_handler.setFormatter(Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
-    file_handler.setLevel(logging.DEBUG)
-    gunicorn_logger.addHandler(file_handler)
-
-    # adicionando logger do gunicorn a aplicacao
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+    setup_logger(app)
 
     # modificando prefixo da url
     app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/flaskeleton-api')
@@ -56,6 +50,8 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate = Migrate(app, db)
     CORS(app)
+
+    app.before_request(log_request)
 
     return app
 

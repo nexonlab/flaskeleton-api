@@ -75,7 +75,7 @@ def delete(codigo: int = None):
         campus_controller = CampusController(codigo=codigo)
         campus_controller.deletar_campus()
 
-        return make_response(204)
+        return make_response()
     except (UsoInvalido, ErroInterno) as e:
         raise e
     except Exception as e:

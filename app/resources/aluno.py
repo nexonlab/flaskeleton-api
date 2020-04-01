@@ -76,7 +76,7 @@ def delete(codigo: int = None):
         aluno_controller = AlunoController(codigo=codigo)
         aluno_controller.deletar_aluno()
 
-        return make_response(204)
+        return "", 204
     except (UsoInvalido, ErroInterno) as e:
         raise e
     except Exception as e:

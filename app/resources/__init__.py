@@ -1,6 +1,7 @@
-from flask import (jsonify, current_app, request, g)
+from flask import (jsonify, request, g)
 from functools import wraps
-from ..errors import TipoErro, UsoInvalido
+from ..errors import TipoErro, UsoInvalido, ErroInterno
+from ..logger import logger
 
 
 def login_required(f):
@@ -38,11 +39,14 @@ def generic_handler(error):
     :param error: objeto a ser tratado pelo handler.
     :return: um objeto JSON a ser enviado como resposta para o requisitante.
     """
-    if error.ex is not None:
-        current_app.logger.error(error.ex)
+    if isinstance(error, UsoInvalido):
+        logger.info(error.payload)
     else:
-        if error.payload is not None:
-            current_app.logger.error(error.payload)
+        if isinstance(error, ErroInterno):
+            logger.error(error.payload, error.ex)
+        else:
+            logger.error(error.payload, error)
+
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response

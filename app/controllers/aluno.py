@@ -1,6 +1,7 @@
 from ..errors import UsoInvalido, ErroInterno, TipoErro
 from ..dao.aluno import AlunoDAO
 from ..models.aluno import Aluno, AlunoSchema
+from ..logger import logger
 import re
 
 
@@ -21,6 +22,7 @@ class AlunoController:
         try:
             resultado = self.__aluno_dao.get()
             if resultado is not None:
+                logger.info("aluno(s) recuperado(s) com sucesso")
                 if isinstance(resultado, list):
                     return AlunoSchema().jsonify(resultado, many=True)
                 else:
@@ -41,6 +43,7 @@ class AlunoController:
                     self.valida_aluno(aluno)
                     aluno_dao = AlunoDAO(self.__aluno)
                     result = aluno_dao.insert()
+                    logger.info("aluno {} criado com sucesso".format(str(self.__aluno)))
                     return AlunoSchema().jsonify(result)
                 else:
                     raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, ex="Objeto aluno a ser inserido está nulo ou "
@@ -58,6 +61,7 @@ class AlunoController:
                 if aluno:
                     self.valida_aluno(aluno)
                     result = self.__aluno_dao.update()
+                    logger.info("aluno atualizado com sucesso")
                     return AlunoSchema().jsonify(result)
                 else:
                     raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="Objeto aluno a ser atualizado está nulo "
@@ -74,7 +78,10 @@ class AlunoController:
             self.__aluno = self.__aluno_dao.get()
             self.__aluno_dao = AlunoDAO(self.__aluno)
             if self.__aluno:
-                return self.__aluno_dao.delete()
+                if self.__aluno_dao.delete():
+                    logger.info("aluno {} deletado com sucesso".format(self.__aluno.codigo))
+                    return True
+                return False
             else:
                 raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não existe.", status_code=404)
         except (UsoInvalido, ErroInterno) as e:
