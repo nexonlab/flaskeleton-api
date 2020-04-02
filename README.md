@@ -86,3 +86,42 @@ da base de dados no container.
 ```shell script
 make create-db
 ```
+
+
+#### Documentação da API
+
+Para acessar a documentação da API, acesse a seguinte rota:
+
+```
+http://127.0.0.1:{PORTA}/flaskeleton-api/apidocs/
+```
+
+A API possui um arquivo de documentação *default* utilizando a especificação do *[Blueprint](https://apiblueprint.org/)*.
+O arquivo está em: `./app/docs/api-blueprint-sample.apib`.
+
+Preferimos deixar a responsabilidade da renderização do template HTML para o desenvolvedor.
+Sempre que houver atualizações na especificação de endpoints da sua API, será de responsabilidade do desenvolvedor 
+realizar a atualização e renderização do documento estático.
+Para isso, basta utilizar as ferramentas existentes e sugeridas pelo *[Blueprint](https://apiblueprint.org/)*.
+
+Afim de facilitar o processo de gerar o HTML, descrevemos ele a seguir.
+
+##### 1. Instale o *Render*
+
+Uma das ferramentas sugeridas pelo *Blueprint* é o [Aglio](https://github.com/danielgtaylor/aglio).
+Usaremos ele:
+
+```npm install -g aglio```
+
+##### 2. Gere a documentação.
+
+Para isso, entre na raíz do projeto e execute o seguinte comando:
+
+```
+aglio -i ./app/docs/api-blueprint-sample.apib --theme-full-width --no-theme-condense -o ./app/templates/apidocs/index.html
+```
+
+O Output será um arquivo ```index.html``` dentro de ```./app/templates/apidocs/index.html```
+que é servido através do endpoint da aplicação.
+
+*p.s: O arquivo base para esta documentação foi retirado de: [Definindo APIs com o API Blueprint](https://eltonminetto.net/post/2017-06-29-definindo-apis-com-api-blueprint/)*.

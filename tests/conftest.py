@@ -32,8 +32,31 @@ def app():
 
 
 @pytest.fixture
+def app_error():
+
+    app = create_app({
+        "TESTING": True,
+        "DEBUG": False,
+        "SQLALCHEMY_DATABASE_URI": "sqlite:///",
+        "SQLALCHEMY_TRACK_MODIFICATIONS": False
+    })
+
+    yield app
+
+    db.drop_all()
+
+
+@pytest.fixture
 def client(app):
     test_client = app.test_client()
     ctx = app.app_context()
+    ctx.push()
+    yield test_client
+
+
+@pytest.fixture
+def client_error(app_error):
+    test_client = app_error.test_client()
+    ctx = app_error.app_context()
     ctx.push()
     yield test_client

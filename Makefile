@@ -57,6 +57,9 @@ tail-logs: ## Sobe o container da aplicação e acompanha os logs
 coverage:
 	coverage run -m pytest && coverage report
 
+coverage-html:
+	coverage html
+
 prettier: ## Formata o codigo para torna-lo mais bonito
 	black -l 79 ./app
 

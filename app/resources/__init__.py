@@ -50,10 +50,7 @@ def generic_handler(error):
     if isinstance(error, UsoInvalido):
         logger.info(error.payload)
     else:
-        if isinstance(error, ErroInterno):
-            logger.error(error.payload, error.ex)
-        else:
-            logger.error(error.payload, error)
+        logger.error(error.payload, error.ex)
 
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
