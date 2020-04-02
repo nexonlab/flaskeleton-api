@@ -2,7 +2,6 @@ from ..models.db import db
 
 
 class DAO:
-
     def __init__(self, obj: object):
         self.__obj = obj
 
@@ -35,4 +34,3 @@ class DAO:
         except Exception as e:
             db.session.rollback()
             raise e
-

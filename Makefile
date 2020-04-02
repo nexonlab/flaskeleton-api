@@ -39,14 +39,26 @@ build: ## Rebuilda os containers
 	docker-compose build
 	$(MAKE) up
 
+create-db:
+	docker-compose run app flask db migrate && flask db upgrade
+
 down: ## Para e remove os containers
 	docker-compose down
 
 test: ## Sobe o container e executa os testes
-	docker-compose run {container} pytest ./tests/
+	docker-compose run $(container) pytest -rpf
 
 test-file: ## Sobe o container da aplicação e executa um arquivo de teste
-	docker-compose run {container} pytest ./tests/ --group $(FILE)
+	docker-compose run $(container) pytest -rpf ./tests/$(FILE)
 
 tail-logs: ## Sobe o container da aplicação e acompanha os logs
-	docker-compose logs -f {container}
+	docker-compose logs -f $(container)
+
+coverage:
+	coverage run -m pytest && coverage report
+
+prettier: ## Formata o codigo para torna-lo mais bonito
+	black -l 79 ./app
+
+lint: ## Verifica qualidade da escrita de codigo
+	flake8 ./app

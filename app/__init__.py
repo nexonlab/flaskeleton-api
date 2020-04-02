@@ -13,7 +13,7 @@ __version__ = "v0.0.1"
 
 
 def setup_logger(app):
-    gunicorn_logger = logging.getLogger('gunicorn.error')
+    gunicorn_logger = logging.getLogger("gunicorn.error")
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
 
@@ -30,7 +30,7 @@ def create_app(test_config=None):
     setup_logger(app)
 
     # modificando prefixo da url
-    app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/flaskeleton-api')
+    app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix="/flaskeleton-api")
 
     if test_config is None:
         # carrega uma instancia de configuracao
@@ -43,12 +43,13 @@ def create_app(test_config=None):
     from .resources.campus import bp as bp_campus
     from .resources.aluno import bp as bp_aluno
     from .resources.docs import bp as bp_docs
+
     app.register_blueprint(bp_campus)
     app.register_blueprint(bp_aluno)
     app.register_blueprint(bp_docs)
 
     db.init_app(app)
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db)  # noqa: F841
     CORS(app)
 
     app.before_request(log_request)
@@ -57,18 +58,19 @@ def create_app(test_config=None):
 
 
 class PrefixMiddleware(object):
-
-    def __init__(self, app, prefix=''):
+    def __init__(self, app, prefix=""):
         self.app = app
         self.prefix = prefix
 
     def __call__(self, environ, start_response):
 
-        if environ['PATH_INFO'].startswith(self.prefix):
-            environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
-            environ['SCRIPT_NAME'] = self.prefix
+        if environ["PATH_INFO"].startswith(self.prefix):
+            environ["PATH_INFO"] = environ["PATH_INFO"][len(self.prefix):]
+            environ["SCRIPT_NAME"] = self.prefix
             return self.app(environ, start_response)
         else:
-            start_response('404', [('Content-Type', 'text/plain')])
-            return ["Esta URL nao pertence a aplicacao. Por favor, insira o prefixo '/flaskeleton-api'."
-                    .encode()]
+            start_response("404", [("Content-Type", "text/plain")])
+            return [
+                "Esta URL nao pertence a aplicacao. "
+                "Por favor, insira o prefixo '/flaskeleton-api'.".encode()
+            ]

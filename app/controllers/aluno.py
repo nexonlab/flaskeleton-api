@@ -28,30 +28,49 @@ class AlunoController:
                 else:
                     return AlunoSchema().jsonify(resultado)
             else:
-                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não foi encontrado.", status_code=404)
+                raise UsoInvalido(
+                    TipoErro.NAO_ENCONTRADO.name,
+                    payload="Aluno não foi encontrado.",
+                    status_code=404,
+                )
         except (UsoInvalido, ErroInterno) as e:
             raise e
         except Exception as e:
-            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao recuperar aluno(s).")
+            raise ErroInterno(
+                TipoErro.ERRO_INTERNO.name,
+                ex=e,
+                payload="Ocorreu um erro ao recuperar aluno(s).",
+            )
 
     def criar_aluno(self, aluno: dict = None) -> Aluno:
         try:
             if self.__aluno.codigo:
-                raise UsoInvalido(TipoErro.ALUNO_DUPLICADO.name, ex="Aluno já existe.")
+                raise UsoInvalido(
+                    TipoErro.ALUNO_DUPLICADO.name, ex="Aluno já existe."
+                )
             else:
                 if aluno:
                     self.valida_aluno(aluno)
                     aluno_dao = AlunoDAO(self.__aluno)
                     result = aluno_dao.insert()
-                    logger.info("aluno {} criado com sucesso".format(str(self.__aluno)))
+                    logger.info(
+                        "aluno {} criado com sucesso".format(str(self.__aluno))
+                    )
                     return AlunoSchema().jsonify(result)
                 else:
-                    raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, ex="Objeto aluno a ser inserido está nulo ou "
-                                                                       "vazio.")
+                    raise UsoInvalido(
+                        TipoErro.ERRO_VALIDACAO.name,
+                        ex="Objeto aluno a ser inserido está nulo ou "
+                        "vazio.",
+                    )
         except (UsoInvalido, ErroInterno) as e:
             raise e
         except Exception as e:
-            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao criar aluno.")
+            raise ErroInterno(
+                TipoErro.ERRO_INTERNO.name,
+                ex=e,
+                payload="Ocorreu um erro ao criar aluno.",
+            )
 
     def atualizar_aluno(self, aluno: dict = None) -> Aluno:
         try:
@@ -64,14 +83,25 @@ class AlunoController:
                     logger.info("aluno atualizado com sucesso")
                     return AlunoSchema().jsonify(result)
                 else:
-                    raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="Objeto aluno a ser atualizado está nulo "
-                                                                            "ou vazio.")
+                    raise UsoInvalido(
+                        TipoErro.ERRO_VALIDACAO.name,
+                        payload="Objeto aluno a ser atualizado está nulo "
+                        "ou vazio.",
+                    )
             else:
-                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não existe.", status_code=404)
+                raise UsoInvalido(
+                    TipoErro.NAO_ENCONTRADO.name,
+                    payload="Aluno não existe.",
+                    status_code=404,
+                )
         except (UsoInvalido, ErroInterno) as e:
             raise e
         except Exception as e:
-            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao atualizar aluno.")
+            raise ErroInterno(
+                TipoErro.ERRO_INTERNO.name,
+                ex=e,
+                payload="Ocorreu um erro ao atualizar aluno.",
+            )
 
     def deletar_aluno(self) -> bool:
         try:
@@ -79,26 +109,43 @@ class AlunoController:
             self.__aluno_dao = AlunoDAO(self.__aluno)
             if self.__aluno:
                 if self.__aluno_dao.delete():
-                    logger.info("aluno {} deletado com sucesso".format(self.__aluno.codigo))
+                    logger.info(
+                        "aluno {} deletado com sucesso".format(
+                            self.__aluno.codigo
+                        )
+                    )
                     return True
                 return False
             else:
-                raise UsoInvalido(TipoErro.NAO_ENCONTRADO.name, payload="Aluno não existe.", status_code=404)
+                raise UsoInvalido(
+                    TipoErro.NAO_ENCONTRADO.name,
+                    payload="Aluno não existe.",
+                    status_code=404,
+                )
         except (UsoInvalido, ErroInterno) as e:
             raise e
         except Exception as e:
-            raise ErroInterno(TipoErro.ERRO_INTERNO.name, ex=e, payload="Ocorreu um erro ao deletar aluno.")
+            raise ErroInterno(
+                TipoErro.ERRO_INTERNO.name,
+                ex=e,
+                payload="Ocorreu um erro ao deletar aluno.",
+            )
 
     def valida_aluno(self, aluno: dict) -> Aluno:
-        attrs = ['nome', 'email', 'endereco']
+        attrs = ["nome", "email", "endereco"]
         for k, v in aluno.items():
             if k not in attrs:
-                raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="Attributo '" + k + "' não é válido.")
+                raise UsoInvalido(
+                    TipoErro.ERRO_VALIDACAO.name,
+                    payload="Attributo '" + k + "' não é válido.",
+                )
             setattr(self.__aluno, k, v)
 
         regex = r"[^@]+@[^@]+\.[^@]+"
         if self.__aluno.email:
             if not re.search(regex, self.__aluno.email):
-                raise UsoInvalido(TipoErro.ERRO_VALIDACAO.name, payload="E-mail inválido.")
+                raise UsoInvalido(
+                    TipoErro.ERRO_VALIDACAO.name, payload="E-mail inválido."
+                )
 
         return self.__aluno

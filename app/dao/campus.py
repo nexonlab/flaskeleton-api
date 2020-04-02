@@ -16,7 +16,9 @@ class CampusDAO(DAO):
 
     def get(self) -> list or Campus:
         if self.__campus.codigo:
-            self.__campus = Campus.query.filter_by(codigo=self.__campus.codigo).first()
+            self.__campus = Campus.query.filter_by(
+                codigo=self.__campus.codigo
+            ).first()
             return self.__campus
         else:
             return Campus.query.all()

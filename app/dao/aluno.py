@@ -17,7 +17,9 @@ class AlunoDAO(DAO):
 
     def get(self) -> list or Aluno:
         if self.__aluno.codigo:
-            self.__aluno = Aluno.query.filter_by(codigo=self.__aluno.codigo).first()
+            self.__aluno = Aluno.query.filter_by(
+                codigo=self.__aluno.codigo
+            ).first()
             return self.__aluno
         else:
             return Aluno.query.all()

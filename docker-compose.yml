@@ -1,12 +1,11 @@
 version: '3.5'
 services:
   app:
-    image: ceumanti/docker-python-odbc:latest
+    build: .
     container_name: flaskeleton
     restart: on-failure:10
     volumes:
       - .:/application
-      - /var/log/flaskeleton-api/:/application/logs/
-    command: bash -c "chmod +x run.sh && ./run.sh"
+    command: gunicorn --workers=4 --bind=0.0.0.0:${PORT} --log-level=info  app:'create_app()'
     ports:
       - "5000:5000"

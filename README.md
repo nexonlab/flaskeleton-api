@@ -79,3 +79,10 @@ para de fato atualizar as tabelas da base de dados.
 Ao concluir com sucesso pela primeira vez os comandos acima,
 note a criação de um arquivo chamado `flaskeleton.db`. Esse
 é o banco de dados *SQLite3* da aplicação.
+
+Caso suba a aplicação em *docker container*, um comando no
+Makefile está disponível para criação das tabelas dentro
+da base de dados no container.
+```shell script
+make create-db
+```
