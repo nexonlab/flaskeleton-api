@@ -6,6 +6,6 @@ services:
     restart: on-failure:10
     volumes:
       - .:/application
-    command: gunicorn --workers=4 --bind=0.0.0.0:${PORT} --log-level=info  app:'create_app()'
+    command: "gunicorn --workers=4 --bind=0.0.0.0:${FLASKELETON_PORT_CONTAINER} --log-level=info  app:'create_app()'"
     ports:
-      - "5000:5000"
+      - "${FLASKELETON_PORT_HOST}:${FLASKELETON_PORT_CONTAINER}"
