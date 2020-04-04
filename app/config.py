@@ -1,22 +1,15 @@
+import os
+
+
 class Config(object):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_AS_ASCII = False
-    params_conn = (
-        "Driver={{ODBC Driver 17 for SQL Server}};"
-        "Server={server};"
-        "Database={database};"
-        "APP=flaskeleton-api;"
-        "UID=MY_USER;"
-        "PWD=MY_PASSWORD;"
-    )
-    SQLALCHEMY_DATABASE_URI = (
-        "sqlite:///../flaskeleton.db"  # default sqlalchemy uri
-    )
-    SQLALCHEMY_BINDS = {
-        "development": "sqlite:///../flaskeleton.db",
-        "production": "sqlite:///../flaskeleton.db",
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
+    APP_BINDS = {
+        "development": os.getenv("DATABASE_DEV"),
+        "production": os.getenv("DATABASE_PROD"),
     }
 
 

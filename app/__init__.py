@@ -1,8 +1,8 @@
 import logging
-from flask import Flask
+from flask import Flask, request, g
 from flask_cors import CORS
 from .models.db import db
-from .config import DevelopmentConfig
+from .config import Config, DevelopmentConfig
 from flask_migrate import Migrate
 from .logger import logger
 
@@ -12,14 +12,28 @@ __email__ = "nti@ceuma.br"
 __version__ = "v0.0.1"
 
 
+binds = {}
+
+
 def setup_logger(app):
     gunicorn_logger = logging.getLogger("gunicorn.error")
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
 
 
+def setup_engine(db):
+    for k, v in Config.APP_BINDS.items():
+        binds[k] = db.create_engine(v)
+
+
 def log_request():
     logger.request()
+
+
+def get_tenant():
+    if "Context" in request.headers:
+        g.context = request.headers["Context"]
+        g.tenant = binds[g.context]
 
 
 def create_app(test_config=None):
@@ -50,9 +64,11 @@ def create_app(test_config=None):
 
     db.init_app(app)
     migrate = Migrate(app, db)  # noqa: F841
+    setup_engine(db)
     CORS(app)
 
     app.before_request(log_request)
+    app.before_request(get_tenant)
 
     return app
 
@@ -65,7 +81,7 @@ class PrefixMiddleware(object):
     def __call__(self, environ, start_response):
 
         if environ["PATH_INFO"].startswith(self.prefix):
-            environ["PATH_INFO"] = environ["PATH_INFO"][len(self.prefix):]
+            environ["PATH_INFO"] = environ["PATH_INFO"][len(self.prefix) :]
             environ["SCRIPT_NAME"] = self.prefix
             return self.app(environ, start_response)
         else:

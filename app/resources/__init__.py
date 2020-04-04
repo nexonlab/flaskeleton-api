@@ -1,6 +1,6 @@
-from flask import jsonify, request, g
+from flask import jsonify, request
 from functools import wraps
-from ..errors import TipoErro, UsoInvalido, ErroInterno
+from ..errors import TipoErro, UsoInvalido
 from ..logger import logger
 
 
@@ -22,16 +22,6 @@ def login_required(f):
                 status_code=401,
                 payload="Cabeçalho de autorização não " "encontrado.",
             )
-        return f(*args, **kwargs)
-
-    return decorated_function
-
-
-def load_context(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "Context" in request.headers:
-            g.context = request.headers["Context"]
         return f(*args, **kwargs)
 
     return decorated_function
