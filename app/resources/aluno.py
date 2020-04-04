@@ -1,7 +1,7 @@
 from flask import make_response, Blueprint, request
 from ..controllers.aluno import AlunoController
 from ..errors import ErroInterno, UsoInvalido, TipoErro
-from . import generic_handler, login_required, load_context
+from . import generic_handler, login_required
 
 
 bp = Blueprint("aluno", __name__, url_prefix="/aluno")
@@ -10,7 +10,6 @@ bp.register_error_handler(UsoInvalido, generic_handler)
 
 
 @bp.route("/", methods=["POST"])
-@load_context
 @login_required
 def create():
     try:
@@ -37,7 +36,6 @@ def create():
 
 @bp.route("/<int:codigo>", methods=["GET"])
 @bp.route("/", methods=["GET"])
-@load_context
 def retrieve(codigo: int = None):
     try:
         aluno_controller = AlunoController(codigo=codigo)
@@ -57,7 +55,6 @@ def retrieve(codigo: int = None):
 
 
 @bp.route("/<int:codigo>", methods=["PUT"])
-@load_context
 @login_required
 def update(codigo: int = None):
     try:
@@ -85,7 +82,6 @@ def update(codigo: int = None):
 
 
 @bp.route("/<int:codigo>", methods=["DELETE"])
-@load_context
 @login_required
 def delete(codigo: int = None):
     try:
