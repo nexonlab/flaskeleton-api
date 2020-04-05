@@ -4,12 +4,8 @@ from flask_cors import CORS
 from .models.db import db
 from .config import Config, DevelopmentConfig
 from flask_migrate import Migrate
-<<<<<<< HEAD
-from .logger import logger
-=======
 import os
 from gevent import monkey
->>>>>>> Adicionando gevent
 
 
 __author__ = "NTI CEUMA"
