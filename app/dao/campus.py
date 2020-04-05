@@ -23,4 +23,4 @@ class CampusDAO(DAO):
             )
             return self.__campus
         else:
-            return self.session.query(Campus).query.all()
+            return self.session.query(Campus).all()
