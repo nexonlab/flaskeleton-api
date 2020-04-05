@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import patch
 
 
@@ -80,7 +79,7 @@ def test_put_campus_not_authorized(client):
 
 
 def test_put_campus_not_found(client):
-    response = client.put('/flaskeleton-api/campus/2', json={
+    response = client.put('/flaskeleton-api/campus/100', json={
         "descricao": "Campus 1"
     }, headers=headers)
     assert response.status_code == 404
@@ -116,7 +115,7 @@ def test_delete_campus_not_authorized(client):
 
 
 def test_delete_campus_not_found(client):
-    response = client.delete('/flaskeleton-api/campus/2', headers=headers)
+    response = client.delete('/flaskeleton-api/campus/100', headers=headers)
     assert response.status_code == 404
     assert response.json['erro'] == "NAO_ENCONTRADO"
 

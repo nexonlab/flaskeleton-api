@@ -1,12 +1,16 @@
 from flask import g
 from sqlalchemy.orm import sessionmaker
+from ..models.db import db
 
 
 class DAO:
     def __init__(self, obj: object):
         self.__obj = obj
-        self.__Session = sessionmaker(bind=g.tenant)
-        self.session = self.__Session()
+        if g.tenant:
+            self.__Session = sessionmaker(bind=g.tenant)
+            self.session = self.__Session()
+        else:
+            self.session = db.session
 
     def get(self) -> list or object:
         pass

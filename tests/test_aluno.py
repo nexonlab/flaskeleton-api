@@ -1,9 +1,8 @@
-import pytest
 from unittest.mock import patch
 
 
 headers = {
-    'Authorization': 123
+    'Authorization': 123,
 }
 
 
@@ -20,14 +19,6 @@ def test_get_aluno(client):
     assert response.json['nome'] == "Joao da Silva"
 
 
-def test_get_aluno_with_context(client):
-    response = client.get('/flaskeleton-api/aluno/1', headers={
-        'Context': 'development'
-    })
-    assert response.status_code == 200
-    assert response.json['nome'] == "Joao da Silva"
-
-
 def test_get_aluno_throw_error(client):
     with patch('app.controllers.aluno.AlunoController.recuperar_aluno', side_effect=Exception('Fake exception')):
         response = client.get('/flaskeleton-api/aluno/1')
@@ -39,12 +30,6 @@ def test_get_aluno_not_found(client):
     response = client.get('/flaskeleton-api/aluno/100')
     assert response.status_code == 404
     assert response.json['erro'] == "NAO_ENCONTRADO"
-
-
-def test_get_aluno_database_error(client_error):
-    response = client_error.get('/flaskeleton-api/aluno/1')
-    assert response.status_code == 500
-    assert response.json['erro'] == "ERRO_INTERNO"
 
 
 def test_post_aluno_not_authorized(client):
@@ -198,4 +183,4 @@ def test_get_list_alunos(client):
     }
     client.post('/flaskeleton-api/aluno/', json=data, headers=headers)
     response = client.get('/flaskeleton-api/aluno/')
-    assert [aluno['codigo'] for aluno in response.json] == [1, 2]
+    assert [aluno['codigo'] for aluno in response.json] == [2, 3]

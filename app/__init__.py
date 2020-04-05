@@ -23,7 +23,8 @@ def setup_logger(app):
 
 def setup_engine(db):
     for k, v in Config.APP_BINDS.items():
-        binds[k] = db.create_engine(v)
+        if v:
+            binds[k] = db.create_engine(v)
 
 
 def log_request():
@@ -34,6 +35,8 @@ def get_tenant():
     if "Context" in request.headers:
         g.context = request.headers["Context"]
         g.tenant = binds[g.context]
+    else:
+        g.tenant = None
 
 
 def create_app(test_config=None):
