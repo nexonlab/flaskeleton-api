@@ -1,4 +1,9 @@
 import os
+from dotenv import load_dotenv
+
+
+basedir = os.path.abspath(os.getcwd())
+load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
@@ -6,10 +11,10 @@ class Config(object):
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_AS_ASCII = False
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
     APP_BINDS = {
-        "development": os.getenv("DATABASE_DEV"),
-        "production": os.getenv("DATABASE_PROD"),
+        "development": os.environ.get("DATABASE_DEV"),
+        "production": os.environ.get("DATABASE_PROD"),
     }
 
 

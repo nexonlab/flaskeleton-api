@@ -9,3 +9,9 @@ services:
     command: "gunicorn --workers=4 --bind=0.0.0.0:${FLASKELETON_PORT_CONTAINER} --log-level=info  app:'create_app()'"
     ports:
       - "${FLASKELETON_PORT_HOST}:${FLASKELETON_PORT_CONTAINER}"
+    environment:
+      - FLASKELETON_PORT_HOST=5000
+      - FLASKELETON_PORT_CONTAINER=3000
+      - DATABASE_URI=sqlite:////application/flaskeleton.db
+      - DATABASE_DEV=sqlite:////application/flaskeleton.db
+      - DATABASE_PROD=sqlite:////application/production.db
