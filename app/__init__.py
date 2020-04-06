@@ -6,7 +6,6 @@ from .config import Config, DevelopmentConfig
 from flask_migrate import Migrate
 from .logger import logger
 import os
-from gevent import monkey
 
 
 __author__ = "NTI CEUMA"
@@ -23,10 +22,10 @@ def setup_logger(app):
     app.logger.setLevel(gunicorn_logger.level)
 
 
-def setup_engine(db):
+def setup_engine(database):
     for k, v in Config.APP_BINDS.items():
         if v:
-            binds[k] = db.create_engine(v)
+            binds[k] = database.create_engine(v)
 
 
 def log_request():
@@ -49,7 +48,7 @@ def create_app(test_config=None):
     setup_logger(app)
 
     # modificando prefixo da url
-    app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix="/flaskeleton-api")
+    app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=os.getenv("API_PREFIX") or "/flaskeleton-api")
 
     if test_config is None:
         # carrega uma instancia de configuracao
@@ -93,5 +92,5 @@ class PrefixMiddleware(object):
             start_response("404", [("Content-Type", "text/plain")])
             return [
                 "Esta URL nao pertence a aplicacao. "
-                "Por favor, insira o prefixo '/flaskeleton-api'.".encode()
+                "Por favor, insira o prefixo '{}'.".format(self.prefix).encode()
             ]
