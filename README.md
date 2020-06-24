@@ -1,3 +1,12 @@
+
+# `DEPRECATED`
+
+### `since 24/06/2020`
+
+`This repository will no longer receive maintenance, future updates will be applied to the parent project in:` [flaskeleton-api](https://github.com/cavalcantigor/flaskeleton-api)
+
+--------------------------------------------------
+
 ## Flaskeleton API
 > Uma aplicação minimalista e completamente funcional contemplando todas as características de uma API
 > completa utilizando *Flask*, *SQLAlchemy*, *Flask-Migrate*, *Marshmallow* e *APIBlueprint*.
